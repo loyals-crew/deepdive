@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="110" fill="#00B4D8"/>
+  <!-- Diving mask -->
+  <rect x="128" y="186" width="256" height="160" rx="48" fill="white" opacity="0.95"/>
+  <rect x="154" y="212" width="94" height="102" rx="28" fill="#0D3B4F" opacity="0.85"/>
+  <rect x="264" y="212" width="94" height="102" rx="28" fill="#0D3B4F" opacity="0.85"/>
+  <rect x="243" y="234" width="26" height="58" rx="13" fill="white" opacity="0.5"/>
+  <!-- Strap top -->
+  <rect x="210" y="154" width="92" height="36" rx="18" fill="white" opacity="0.8"/>
+  <!-- Snorkel -->
+  <rect x="394" y="160" width="20" height="132" rx="10" fill="white" opacity="0.7"/>
+  <!-- Bubbles -->
+  <circle cx="346" cy="134" r="13" fill="white" opacity="0.6"/>
+  <circle cx="384" cy="104" r="9" fill="white" opacity="0.45"/>
+  <circle cx="314" cy="108" r="10" fill="white" opacity="0.5"/>
+</svg>

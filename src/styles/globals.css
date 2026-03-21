@@ -1,0 +1,79 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-coral:          #FF6B6B;
+  --color-coral-dark:     #E85555;
+  --color-coral-light:    #FFE8E8;
+  --color-turquoise:      #00B4D8;
+  --color-turquoise-dark: #0096B4;
+  --color-turquoise-light:#E0F7FA;
+  --color-sand:           #FFF8F0;
+  --color-deep:           #0D3B4F;
+  --color-muted:          #7A9BAD;
+  --color-surface:        #FFFFFF;
+  --color-border:         #D9EEF4;
+  --color-error:          #E53E3E;
+  --color-error-light:    #FFF5F5;
+  --color-success:        #38A169;
+
+  --radius-sm:   0.5rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-card: 1.5rem;
+
+  --shadow-card: 0 8px 40px rgba(0, 180, 216, 0.15);
+  --shadow-btn:  0 4px 14px rgba(255, 107, 107, 0.35);
+
+  --font-main: 'Nunito', system-ui, -apple-system, sans-serif;
+
+  --transition: 0.18s ease;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: var(--font-main);
+  background: linear-gradient(160deg, #CAF0F8 0%, #90E0EF 30%, #FFF8F0 100%);
+  background-attachment: fixed;
+  color: var(--color-deep);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+a {
+  color: var(--color-turquoise-dark);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-coral);
+}
+
+button {
+  font-family: var(--font-main);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, select {
+  font-family: var(--font-main);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
