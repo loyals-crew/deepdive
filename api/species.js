@@ -1,6 +1,6 @@
-import { sql } from '../_lib/db.js'
-import { setCorsHeaders } from '../_lib/cors.js'
-import { requireAuth } from '../_lib/auth.js'
+import { sql } from './_lib/db.js'
+import { setCorsHeaders } from './_lib/cors.js'
+import { requireAuth } from './_lib/auth.js'
 
 export default async function handler(req, res) {
   setCorsHeaders(res)

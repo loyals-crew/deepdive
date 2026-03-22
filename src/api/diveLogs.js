@@ -15,49 +15,49 @@ async function apiFetch(path, token, options = {}) {
 }
 
 export const apiDiveSiteSearch = (token, q) =>
-  apiFetch(`/dive-sites/search?q=${encodeURIComponent(q)}`, token)
+  apiFetch(`/dive-sites?q=${encodeURIComponent(q)}`, token)
 
 export const apiDiveSiteCreate = (token, data) =>
-  apiFetch('/dive-sites/create', token, {
+  apiFetch('/dive-sites', token, {
     method: 'POST',
     body: JSON.stringify(data),
   })
 
 export const apiSpeciesSearch = (token, q = '', category = 'all') =>
-  apiFetch(`/species/search?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}`, token)
+  apiFetch(`/species?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}`, token)
 
 export const apiDiveLogCreate = (token, data) =>
-  apiFetch('/dive-logs/create', token, {
+  apiFetch('/dive-logs', token, {
     method: 'POST',
     body: JSON.stringify(data),
   })
 
 export const apiMyDiveLogs = (token) =>
-  apiFetch('/dive-logs/mine', token)
+  apiFetch('/dive-logs', token)
 
 export const apiDiveLogDetail = (token, id) =>
   apiFetch(`/dive-logs/${id}`, token)
 
 export const apiFeedList = (token) =>
-  apiFetch('/feed/list', token)
+  apiFetch('/feed', token)
 
 export const apiToggleLike = (token, logId) =>
-  apiFetch('/dive-logs/like', token, {
+  apiFetch(`/dive-logs/${logId}`, token, {
     method: 'POST',
-    body: JSON.stringify({ logId }),
+    body: JSON.stringify({ action: 'like' }),
   })
 
 export const apiGetComments = (token, logId) =>
-  apiFetch(`/dive-logs/comments?logId=${encodeURIComponent(logId)}`, token)
+  apiFetch(`/dive-logs/${logId}?c=1`, token)
 
 export const apiAddComment = (token, logId, body, parentId = null) =>
-  apiFetch('/dive-logs/comments', token, {
+  apiFetch(`/dive-logs/${logId}`, token, {
     method: 'POST',
-    body: JSON.stringify({ logId, body, parentId }),
+    body: JSON.stringify({ action: 'comment', body, parentId }),
   })
 
-export const apiDeleteComment = (token, commentId) =>
-  apiFetch('/dive-logs/comment-delete', token, {
-    method: 'POST',
+export const apiDeleteComment = (token, logId, commentId) =>
+  apiFetch(`/dive-logs/${logId}`, token, {
+    method: 'DELETE',
     body: JSON.stringify({ commentId }),
   })

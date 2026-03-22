@@ -15,19 +15,19 @@ async function apiFetch(path, token, options = {}) {
 }
 
 export const apiFriendsList = (token) =>
-  apiFetch('/friends/list', token)
+  apiFetch('/friends', token)
 
 export const apiUsersSearch = (token, query) =>
   apiFetch(`/users/search?q=${encodeURIComponent(query)}`, token)
 
 export const apiFriendRequest = (token, addresseeId) =>
-  apiFetch('/friends/request', token, {
+  apiFetch('/friends', token, {
     method: 'POST',
     body: JSON.stringify({ addresseeId }),
   })
 
 export const apiFriendRespond = (token, friendshipId, action) =>
-  apiFetch('/friends/respond', token, {
+  apiFetch('/friends', token, {
     method: 'POST',
     body: JSON.stringify({ friendshipId, action }),
   })

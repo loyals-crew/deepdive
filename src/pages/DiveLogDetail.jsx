@@ -315,7 +315,7 @@ export default function DiveLogDetail() {
   }
 
   const handleDelete = async (commentId) => {
-    await apiDeleteComment(token, commentId)
+    await apiDeleteComment(token, id, commentId)
     // Remove from top-level or from replies
     setComments((prev) => prev
       .filter((c) => c.id !== commentId)
