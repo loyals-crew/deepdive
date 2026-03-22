@@ -1,45 +1,33 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import SignIn from '../pages/SignIn'
 import SignUp from '../pages/SignUp'
+import Friends from '../pages/Friends'
+import AppLayout from '../components/layout/AppLayout'
 import { useAuth } from '../hooks/useAuth'
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute() {
   const { user } = useAuth()
-  return user ? children : <Navigate to="/signin" replace />
+  return user ? <Outlet /> : <Navigate to="/signin" replace />
 }
 
-function FeedPlaceholder() {
-  const { user, logout } = useAuth()
+function FeedPage() {
+  const { user } = useAuth()
   return (
     <div style={{
-      minHeight: '100dvh',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      flex: 1,
       gap: '1rem',
       fontFamily: 'var(--font-main)',
-      background: 'linear-gradient(160deg, #CAF0F8 0%, #90E0EF 30%, #FFF8F0 100%)',
+      padding: '4rem 1.5rem',
     }}>
-      <span style={{ fontSize: '3rem' }}>🤿</span>
-      <h2 style={{ color: '#0D3B4F', fontWeight: 800 }}>Welcome, {user?.name}!</h2>
-      <p style={{ color: '#7A9BAD' }}>The feed is coming soon... stay tuned.</p>
-      <button
-        onClick={logout}
-        style={{
-          marginTop: '1rem',
-          padding: '0.6rem 1.5rem',
-          background: '#FF6B6B',
-          color: 'white',
-          border: 'none',
-          borderRadius: '0.75rem',
-          fontFamily: 'inherit',
-          fontWeight: 700,
-          cursor: 'pointer',
-        }}
-      >
-        Sign out
-      </button>
+      <span style={{ fontSize: '3.5rem' }}>🤿</span>
+      <h2 style={{ color: 'var(--color-deep)', fontWeight: 800, fontSize: '1.4rem' }}>
+        Welcome back, {user?.name}!
+      </h2>
+      <p style={{ color: 'var(--color-muted)' }}>The feed is coming soon... stay tuned.</p>
     </div>
   )
 }
@@ -48,16 +36,18 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public auth pages */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <FeedPlaceholder />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Protected pages — all wrapped in AppLayout (navbar) */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<FeedPage />} />
+            <Route path="/friends" element={<Friends />} />
+          </Route>
+        </Route>
+
         <Route path="*" element={<Navigate to="/signin" replace />} />
       </Routes>
     </BrowserRouter>
