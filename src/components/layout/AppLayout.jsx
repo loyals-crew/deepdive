@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 const MaskLogo = () => (
@@ -13,6 +13,7 @@ const MaskLogo = () => (
 
 export default function AppLayout() {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const navStyle = {
     position: 'sticky',
@@ -69,6 +70,20 @@ export default function AppLayout() {
     whiteSpace: 'nowrap',
   }
 
+  const navLinkStyle = ({ isActive }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.3rem',
+    padding: '0.35rem 0.75rem',
+    borderRadius: 'var(--radius-md)',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    textDecoration: 'none',
+    color: isActive ? 'var(--color-turquoise-dark)' : 'var(--color-muted)',
+    background: isActive ? 'var(--color-turquoise-light)' : 'transparent',
+    transition: 'all var(--transition)',
+  })
+
   const logoutBtnStyle = {
     padding: '0.3rem 0.75rem',
     borderRadius: 'var(--radius-md)',
@@ -82,6 +97,21 @@ export default function AppLayout() {
     fontFamily: 'var(--font-main)',
   }
 
+  const logDiveBtnStyle = {
+    padding: '0.35rem 0.85rem',
+    borderRadius: '999px',
+    fontSize: '0.85rem',
+    fontWeight: '800',
+    color: '#fff',
+    background: 'var(--color-coral)',
+    border: 'none',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-main)',
+    boxShadow: 'var(--shadow-btn)',
+    flexShrink: 0,
+    transition: 'all var(--transition)',
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
       <nav style={navStyle}>
@@ -91,46 +121,21 @@ export default function AppLayout() {
         </NavLink>
 
         <div style={navLinksStyle}>
-          <NavLink
-            to="/"
-            end
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              textDecoration: 'none',
-              color: isActive ? 'var(--color-turquoise-dark)' : 'var(--color-muted)',
-              background: isActive ? 'var(--color-turquoise-light)' : 'transparent',
-              transition: 'all var(--transition)',
-            })}
-          >
-            🏠 Home
+          <NavLink to="/" end style={navLinkStyle}>
+            🌊 Feed
           </NavLink>
-          <NavLink
-            to="/friends"
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              textDecoration: 'none',
-              color: isActive ? 'var(--color-turquoise-dark)' : 'var(--color-muted)',
-              background: isActive ? 'var(--color-turquoise-light)' : 'transparent',
-              transition: 'all var(--transition)',
-            })}
-          >
+          <NavLink to="/my-dives" style={navLinkStyle}>
+            📔 My Dives
+          </NavLink>
+          <NavLink to="/friends" style={navLinkStyle}>
             🤿 Friends
           </NavLink>
         </div>
 
         <div style={userSectionStyle}>
+          <button style={logDiveBtnStyle} onClick={() => navigate('/log')}>
+            ➕ Log Dive
+          </button>
           <span style={userNameStyle}>{user?.name}</span>
           <button style={logoutBtnStyle} onClick={logout}>Sign out</button>
         </div>
