@@ -333,6 +333,19 @@ function Step1({ form, setForm, token }) {
         </p>
       </div>
 
+      {/* Dive title */}
+      <div>
+        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-deep)', marginBottom: '0.35rem' }}>
+          Dive Name <span style={{ fontWeight: 400, color: 'var(--color-muted)', fontSize: '0.8rem' }}>(optional)</span>
+        </label>
+        <input
+          value={form.title}
+          onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+          placeholder="e.g. Morning reef drift, Night dive #3..."
+          style={inputStyle}
+        />
+      </div>
+
       {/* Dive site */}
       <div style={{ position: 'relative' }}>
         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-deep)', marginBottom: '0.35rem' }}>
@@ -343,7 +356,7 @@ function Step1({ form, setForm, token }) {
           onChange={(e) => { setSiteQuery(e.target.value); clearSite(); setForm((f) => ({ ...f, diveSiteName: e.target.value })) }}
           onFocus={() => sites.length > 0 && setShowDropdown(true)}
           onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-          placeholder="e.g. Great Barrier Reef, Sipadan..."
+          placeholder="Type the site name (any language)..."
           style={inputStyle}
         />
         {showDropdown && sites.length > 0 && (
@@ -367,11 +380,14 @@ function Step1({ form, setForm, token }) {
             ))}
           </div>
         )}
-        {form.diveSiteId && (
-          <span style={{ fontSize: '0.78rem', color: 'var(--color-success)', marginTop: '0.3rem', display: 'block' }}>
-            ✓ Site saved in DeepDive database
-          </span>
-        )}
+        <span style={{ fontSize: '0.78rem', marginTop: '0.3rem', display: 'block',
+          color: form.diveSiteId ? 'var(--color-success)' : 'var(--color-muted)' }}>
+          {form.diveSiteId
+            ? '✓ Matched a known site in DeepDive'
+            : siteQuery.trim().length > 0
+              ? '✎ New site — we\'ll add it to the database when you save'
+              : 'Type any name — local language is fine 🌏'}
+        </span>
       </div>
 
       {/* Country */}
@@ -605,7 +621,9 @@ function Step4({ animals, setAnimals, token }) {
               padding: '0.3rem 0.6rem', border: '1.5px solid var(--color-turquoise)',
               fontSize: '0.85rem',
             }}>
-              <span>{a.emoji}</span>
+              {a.photoPreview
+                ? <img src={a.photoPreview} alt="" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
+                : <span>{a.emoji}</span>}
               <span style={{ fontWeight: 700, color: 'var(--color-deep)' }}>{a.name}</span>
               <button type="button" onClick={() => adjustCount(i, -1)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--color-muted)', padding: '0 2px' }}>−</button>
               <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--color-turquoise-dark)', minWidth: '12px', textAlign: 'center' }}>{a.count}</span>
@@ -676,21 +694,24 @@ function Step4({ animals, setAnimals, token }) {
         })}
       </div>
 
-      {/* Custom animal */}
-      <div>
-        <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-muted)', marginBottom: '0.4rem' }}>
-          🐾 Not in the list? Add a custom sighting:
+      {/* Custom animal + photo */}
+      <div style={{
+        background: 'var(--color-surface)', border: '1.5px dashed var(--color-border)',
+        borderRadius: 'var(--radius-md)', padding: '0.85rem',
+      }}>
+        <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-muted)', marginBottom: '0.5rem' }}>
+          🐾 Saw something not in the list?
         </label>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <input
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addCustom()}
-            placeholder="e.g. Giant isopod, mystery nudibranch..."
+            placeholder="Describe it: e.g. big blue flatworm, mystery crab..."
             style={{
               flex: 1, padding: '0.65rem 0.85rem', fontSize: '0.9rem',
               border: '2px solid var(--color-border)', borderRadius: 'var(--radius-md)',
-              fontFamily: 'var(--font-main)', outline: 'none',
+              fontFamily: 'var(--font-main)', outline: 'none', background: '#fff',
             }}
           />
           <button type="button" onClick={addCustom}
@@ -700,6 +721,30 @@ function Step4({ animals, setAnimals, token }) {
               fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-main)', fontSize: '0.9rem',
             }}>Add</button>
         </div>
+        <label style={{
+          display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer',
+          padding: '0.55rem 0.85rem', borderRadius: 'var(--radius-md)',
+          border: '1.5px dashed var(--color-turquoise)',
+          background: 'var(--color-turquoise-light)', fontSize: '0.82rem',
+          fontWeight: 700, color: 'var(--color-turquoise-dark)',
+        }}>
+          <input type="file" accept="image/*" capture="environment"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              const name = customName.trim() || 'Unknown species'
+              setAnimals((prev) => [...prev, {
+                speciesId: null, customName: name, name, emoji: '📷', count: 1,
+                photoFile: file, photoPreview: URL.createObjectURL(file),
+              }])
+              setCustomName('')
+              e.target.value = ''
+            }}
+          />
+          📷 Take / upload a photo to remember it
+          <span style={{ fontWeight: 400, fontSize: '0.75rem', opacity: 0.8 }}>(saved with your log)</span>
+        </label>
       </div>
     </div>
   )
@@ -1170,6 +1215,7 @@ function Step6({ form, setForm, animals, token }) {
 // ─── Main LogDive page ────────────────────────────────────────────────────────
 
 const INITIAL_FORM = {
+  title: '',
   diveSiteId: null, diveSiteName: '', country: '',
   diveDate: TODAY, entryTime: '', exitTime: '', entryType: '',
   maxDepthM: '', avgDepthM: '', durationMin: '',
@@ -1184,6 +1230,7 @@ const INITIAL_FORM = {
   siteRating: 0, siteReview: '', shopName: '', shopRating: 0, shopReview: '',
   divemasterName: '', divemasterRating: 0, divemasterReview: '',
   privacy: 'public',
+  companions: [],
 }
 
 const keyframes = `
