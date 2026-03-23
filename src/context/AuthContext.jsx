@@ -13,10 +13,20 @@ function decodeToken(token) {
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('deepdive_token'))
-  const [user, setUser] = useState(null)
+  const [user, setUser]   = useState(() => {
+    const t = localStorage.getItem('deepdive_token')
+    if (!t) return null
+    const decoded = decodeToken(t)
+    if (!decoded || decoded.exp * 1000 < Date.now()) {
+      localStorage.removeItem('deepdive_token')
+      return null
+    }
+    return decoded
+  })
 
+  // Keep user in sync if token changes after mount (e.g. login in another tab)
   useEffect(() => {
-    if (!token) return
+    if (!token) { setUser(null); return }
     const decoded = decodeToken(token)
     if (!decoded || decoded.exp * 1000 < Date.now()) {
       logout()
