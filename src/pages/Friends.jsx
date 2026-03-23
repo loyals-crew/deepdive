@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Button from '../components/ui/Button'
 import {
@@ -25,7 +26,7 @@ const shimmerKeyframe = `
 
 // ─── UserCard ─────────────────────────────────────────────────────────────────
 
-function UserCard({ user, mode, mutualCount, friendshipId, onAction, loading }) {
+function UserCard({ user, mode, mutualCount, friendshipId, onAction, loading, onViewProfile }) {
   const [hovered, setHovered] = useState(false)
 
   const cardStyle = {
@@ -136,8 +137,14 @@ function UserCard({ user, mode, mutualCount, friendshipId, onAction, loading }) 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div style={avatarStyle}>{initials}</div>
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div
+        style={{ ...avatarStyle, cursor: onViewProfile ? 'pointer' : 'default' }}
+        onClick={onViewProfile}
+      >{initials}</div>
+      <div
+        style={{ flex: 1, minWidth: 0, cursor: onViewProfile ? 'pointer' : 'default' }}
+        onClick={onViewProfile}
+      >
         <div style={{
           fontSize: '0.95rem', fontWeight: '700', color: 'var(--color-deep)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
@@ -145,6 +152,11 @@ function UserCard({ user, mode, mutualCount, friendshipId, onAction, loading }) 
         <div style={{ fontSize: '0.78rem', color: 'var(--color-muted)', marginTop: '0.1rem' }}>
           {LEVEL_LABEL[user.experienceLevel] ?? user.experienceLevel}
         </div>
+        {onViewProfile && (
+          <div style={{ fontSize: '0.72rem', color: 'var(--color-turquoise-dark)', marginTop: '0.15rem', fontWeight: 700 }}>
+            View dives →
+          </div>
+        )}
         {mode === 'recommendation' && mutualCount > 0 && (
           <span style={{
             display: 'inline-block', marginTop: '0.2rem',
@@ -198,6 +210,7 @@ function SkeletonCards({ count = 3 }) {
 
 export default function Friends() {
   const { token } = useAuth()
+  const navigate  = useNavigate()
 
   const [friends, setFriends]             = useState([])
   const [pending, setPending]             = useState([])
@@ -436,7 +449,8 @@ export default function Friends() {
             emptyText="Your crew is empty — search for divers and send some requests!"
           >
             {friends.map((f) => (
-              <UserCard key={f.id} user={f} mode="friend" onAction={handleAction} loading={false} />
+              <UserCard key={f.id} user={f} mode="friend" onAction={handleAction} loading={false}
+                onViewProfile={() => navigate(`/user/${f.id}`)} />
             ))}
           </Section>
         )}

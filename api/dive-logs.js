@@ -9,9 +9,37 @@ export default async function handler(req, res) {
   const user = requireAuth(req, res)
   if (!user) return
 
-  // ── GET — list my dive logs ──────────────────────────────────────────────────
+  // ── GET — list dive logs (mine or another user's) ────────────────────────────
   if (req.method === 'GET') {
+    const targetId = req.query.userId || user.sub
+    const isOwn    = targetId === user.sub
+
     try {
+      // If viewing someone else's logs, check friendship for friends-only visibility
+      let isFriend = false
+      if (!isOwn) {
+        const [row] = await sql`
+          SELECT id FROM friendships
+          WHERE status = 'accepted'
+            AND (
+              (requester_id = ${user.sub} AND addressee_id = ${targetId})
+              OR (addressee_id = ${user.sub} AND requester_id = ${targetId})
+            )
+        `
+        isFriend = !!row
+      }
+
+      // Fetch target user info (for profile header)
+      let profileUser = null
+      if (!isOwn) {
+        const [u] = await sql`
+          SELECT id, full_name AS "fullName", experience_level AS "experienceLevel"
+          FROM users WHERE id = ${targetId}
+        `
+        if (!u) return res.status(404).json({ error: 'User not found' })
+        profileUser = u
+      }
+
       const logs = await sql`
         SELECT
           dl.id,
@@ -37,13 +65,18 @@ export default async function handler(req, res) {
         LEFT JOIN dive_log_animals dla ON dla.dive_log_id = dl.id
         LEFT JOIN marine_species   ms  ON ms.id = dla.species_id
         LEFT JOIN dive_log_likes   dll ON dll.dive_log_id = dl.id
-        WHERE dl.user_id = ${user.sub}
+        WHERE dl.user_id = ${targetId}
+          AND (
+            ${isOwn}
+            OR dl.privacy = 'public'
+            OR (dl.privacy = 'friends' AND ${isFriend})
+          )
         GROUP BY dl.id
         ORDER BY dl.dive_date DESC, dl.created_at DESC
       `
-      return res.status(200).json({ logs })
+      return res.status(200).json({ logs, profileUser })
     } catch (err) {
-      console.error('dive-logs mine error', err)
+      console.error('dive-logs list error', err)
       return res.status(500).json({ error: 'Internal server error' })
     }
   }

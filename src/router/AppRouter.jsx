@@ -6,6 +6,7 @@ import Feed from '../pages/Feed'
 import LogDive from '../pages/LogDive'
 import DiveLogDetail from '../pages/DiveLogDetail'
 import MyDives from '../pages/MyDives'
+import UserProfile from '../pages/UserProfile'
 import AppLayout from '../components/layout/AppLayout'
 import { useAuth } from '../hooks/useAuth'
 
@@ -28,8 +29,9 @@ export default function AppRouter() {
             <Route path="/"         element={<Feed />} />
             <Route path="/log"      element={<LogDive />} />
             <Route path="/dive/:id" element={<DiveLogDetail />} />
-            <Route path="/my-dives" element={<MyDives />} />
-            <Route path="/friends"  element={<Friends />} />
+            <Route path="/my-dives"   element={<MyDives />} />
+            <Route path="/friends"    element={<Friends />} />
+            <Route path="/user/:id"   element={<UserProfile />} />
           </Route>
         </Route>
 

@@ -35,6 +35,9 @@ export const apiDiveLogCreate = (token, data) =>
 export const apiMyDiveLogs = (token) =>
   apiFetch('/dive-logs', token)
 
+export const apiUserDiveLogs = (token, userId) =>
+  apiFetch(`/dive-logs?userId=${encodeURIComponent(userId)}`, token)
+
 export const apiDiveLogDetail = (token, id) =>
   apiFetch(`/dive-logs/${id}`, token)
 
